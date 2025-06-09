@@ -1,71 +1,460 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DenyWorld - Minecraft Server</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="js/webapp.js"></script>
+    <title>DenyWorld 2025 | Minecraft Сервер</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            /* Светлая тема */
+            --light-bg: #f8f9fa;
+            --light-card: #ffffff;
+            --light-text: #212529;
+            --light-accent: #4361ee;
+            --light-border: #e9ecef;
+            
+            /* Темная тема */
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --dark-text: #e9ecef;
+            --dark-accent: #4cc9f0;
+            --dark-border: #2e2e2e;
+            
+            /* Общие */
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --radius: 16px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        [data-theme="light"] {
+            --bg: var(--light-bg);
+            --card: var(--light-card);
+            --text: var(--light-text);
+            --accent: var(--light-accent);
+            --border: var(--light-border);
+        }
+        
+        [data-theme="dark"] {
+            --bg: var(--dark-bg);
+            --card: var(--dark-card);
+            --text: var(--dark-text);
+            --accent: var(--dark-accent);
+            --border: var(--dark-border);
+        }
+        
+        /* Прелоадер */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
+        
+        .preloader-logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .preloader-cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 6s infinite linear;
+        }
+        
+        .preloader-cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--accent), #7209b7);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            backface-visibility: hidden;
+        }
+        
+        .preloader-cube-face.front { transform: translateZ(60px); }
+        .preloader-cube-face.back { transform: rotateY(180deg) translateZ(60px); }
+        .preloader-cube-face.right { transform: rotateY(90deg) translateZ(60px); }
+        .preloader-cube-face.left { transform: rotateY(-90deg) translateZ(60px); }
+        .preloader-cube-face.top { transform: rotateX(90deg) translateZ(60px); }
+        .preloader-cube-face.bottom { transform: rotateX(-90deg) translateZ(60px); }
+        
+        .preloader-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+        
+        .preloader-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #7209b7);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), #7209b7);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            transform-style: preserve-3d;
+            transform: rotateY(15deg);
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.3);
+        }
+        
+        .logo-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #7209b7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+        
+        .logo-text p {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+        
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--card);
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            text-decoration: none;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(114, 9, 183, 0.1));
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: perspective(1000px) translateY(-10px) rotateX(2deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), #7209b7);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+        
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text);
+            opacity: 0.6;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        
+        /* Анимации */
+        @keyframes rotate {
+            0% { transform: rotateY(0) rotateX(10deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Адаптация */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 2rem;
+            }
+            
+            .theme-toggle {
+                margin-top: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">
-                <h1>DenyWorld</h1>
-                <p>Minecraft Server</p>
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-logo">
+            <div class="preloader-cube">
+                <div class="preloader-cube-face front">DW</div>
+                <div class="preloader-cube-face back">2025</div>
+                <div class="preloader-cube-face right"></div>
+                <div class="preloader-cube-face left"></div>
+                <div class="preloader-cube-face top"></div>
+                <div class="preloader-cube-face bottom"></div>
             </div>
+        </div>
+        <div class="preloader-progress">
+            <div class="preloader-progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container" id="mainContent">
+        <header>
+            <div class="logo">
+                <div class="logo-icon" id="logo3d">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>DenyWorld</h1>
+                    <p>Minecraft Сервер 2025</p>
+                </div>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 17.6859L18.5 18.5M21 12H20M17.6859 6.31412L18.5 5.5M6.31412 17.6859L5.5 18.5M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </header>
 
-        <main class="main-grid">
+        <main class="grid">
             <a href="profile.html" class="card">
                 <div class="card-icon">👤</div>
-                <h3>Мой профиль</h3>
-                <p>Статистика и достижения</p>
+                <h3>Мой Профиль</h3>
+                <p>Ваша статистика, достижения и настройки аккаунта</p>
             </a>
 
             <a href="top.html" class="card">
                 <div class="card-icon">🏆</div>
-                <h3>Топ игроков</h3>
-                <p>Лучшие игроки сервера</p>
+                <h3>Топ Игроков</h3>
+                <p>Рейтинг лучших игроков сервера по различным критериям</p>
             </a>
 
             <a href="online.html" class="card">
                 <div class="card-icon">🟢</div>
                 <h3>Онлайн</h3>
-                <p>Кто сейчас в игре</p>
+                <p>Список игроков, находящихся в игре в данный момент</p>
             </a>
 
             <a href="2fa.html" class="card">
                 <div class="card-icon">🔐</div>
-                <h3>2FA защита</h3>
-                <p>Безопасность аккаунта</p>
+                <h3>2FA Защита</h3>
+                <p>Настройки двухфакторной аутентификации вашего аккаунта</p>
             </a>
 
             <a href="shop.html" class="card">
                 <div class="card-icon">🛒</div>
                 <h3>Магазин</h3>
-                <p>Покупка привилегий</p>
+                <p>Приобретение привилегий и внутриигровых предметов</p>
             </a>
 
             <a href="social.html" class="card">
                 <div class="card-icon">🌐</div>
                 <h3>Соцсети</h3>
-                <p>Наши сообщества</p>
+                <p>Наши сообщества в Discord, VK и других платформах</p>
             </a>
 
             <a href="help.html" class="card">
-                <div class="card-icon">ℹ️</div>
+                <div class="card-icon">❓</div>
                 <h3>Помощь</h3>
-                <p>FAQ и поддержка</p>
+                <p>Частые вопросы и руководства по работе с сервером</p>
+            </a>
+
+            <a href="rules.html" class="card">
+                <div class="card-icon">📜</div>
+                <h3>Правила</h3>
+                <p>Официальные правила сервера DenyWorld</p>
             </a>
         </main>
 
-        <footer class="footer">
-            <p>DenyWorld © 2023 | Версия 1.0.0</p>
+        <footer>
+            <p>DenyWorld © 2025 | Версия 3.0 | Все права защищены</p>
         </footer>
     </div>
 
-    <script src="js/main.js"></script>
+    <script>
+        // Анимация загрузки
+        document.addEventListener('DOMContentLoaded', () => {
+            // Имитация загрузки
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            const preloader = document.getElementById('preloader');
+            const mainContent = document.getElementById('mainContent');
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        preloader.style.opacity = '0';
+                        preloader.style.pointerEvents = 'none';
+                        
+                        mainContent.style.opacity = '1';
+                        mainContent.style.transform = 'translateY(0)';
+                    }, 500);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 100);
+            
+            // 3D эффект для логотипа
+            const logo3d = document.getElementById('logo3d');
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                logo3d.style.transform = `rotateY(${x * 30 - 15}deg) rotateX(${y * -20 + 10}deg)`;
+            });
+            
+            // Переключение темы
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                
+                // Сохраняем выбор темы
+                localStorage.setItem('theme', newTheme);
+            });
+            
+            // Проверка сохраненной темы
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+    </script>
 </body>
 </html>
