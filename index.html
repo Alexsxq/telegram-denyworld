@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DenyWorld | Premium</title>
+    <title>DenyWorld | Официальный сервер</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap">
     <style>
         :root {
@@ -55,15 +55,13 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: url('https://i.imgur.com/xyz1234.jpg') center/cover;
             margin-right: 12px;
-            box-shadow: 0 8px 20px rgba(108, 77, 246, 0.3);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px rgba(108, 77, 246, 0.5);
         }
 
         .logo-text h1 {
@@ -160,19 +158,27 @@
 
         .tab {
             flex: 1;
-            min-width: 80px;
+            min-width: 60px;
             text-align: center;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 12px 8px;
+            font-size: 0;
             color: var(--text-dim);
             cursor: pointer;
             transition: var(--transition);
-            white-space: nowrap;
+            position: relative;
+        }
+
+        .tab::before {
+            content: attr(data-icon);
+            font-size: 24px;
         }
 
         .tab.active {
             color: var(--text);
+        }
+
+        .tab-text {
+            display: none;
         }
 
         .tab-indicator {
@@ -256,13 +262,13 @@
             font-weight: 700;
         }
 
-        .players-list {
+        .server-info {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .player {
+        .server-item {
             display: flex;
             align-items: center;
             padding: 12px;
@@ -271,12 +277,11 @@
             transition: var(--transition);
         }
 
-        .player:hover {
+        .server-item:hover {
             background: rgba(255,255,255,0.07);
-            transform: translateX(5px);
         }
 
-        .player-avatar {
+        .server-icon {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -285,34 +290,70 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: 700;
+            font-size: 20px;
         }
 
-        .player-info {
+        .server-details {
             flex: 1;
         }
 
-        .player-name {
+        .server-name {
             font-weight: 700;
             margin-bottom: 2px;
         }
 
-        .player-status {
+        .server-address {
             font-size: 12px;
             color: var(--text-dim);
         }
 
-        .online {
-            color: #00E676;
+        .copy-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
         }
 
-        .offline {
-            color: #FF4081;
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
         }
 
-        .player-score {
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .social-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .social-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+
+        .social-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .social-name {
             font-weight: 700;
-            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .social-link {
+            font-size: 12px;
+            color: var(--text-dim);
+            word-break: break-all;
         }
 
         @keyframes fadeIn {
@@ -349,6 +390,22 @@
             50% { transform: translate(-10px, -20px); }
         }
 
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .creator {
+            margin-top: 10px;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
         /* Адаптация для мобильных */
         @media (max-width: 480px) {
             .app {
@@ -356,8 +413,8 @@
             }
             
             .tab {
-                padding: 10px 8px;
-                font-size: 13px;
+                min-width: 50px;
+                padding: 10px 5px;
             }
         }
     </style>
@@ -369,16 +426,10 @@
     <div class="app">
         <div class="header">
             <div class="logo">
-                <div class="logo-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
+                <div class="logo-icon"></div>
                 <div class="logo-text">
                     <h1>DenyWorld</h1>
-                    <p>Premium Experience</p>
+                    <p>Официальный сервер</p>
                 </div>
             </div>
             
@@ -406,16 +457,13 @@
 
         <div class="tabs" id="tabs">
             <div class="tab-indicator" id="tabIndicator"></div>
-            <div class="tab active" data-tab="profile">Профиль</div>
-            <div class="tab" data-tab="top">Топ игроков</div>
-            <div class="tab" data-tab="online">Онлайн</div>
-            <div class="tab" data-tab="2fa">2FA</div>
-            <div class="tab" data-tab="shop">Магазин</div>
-            <div class="tab" data-tab="social">Соцсети</div>
-            <div class="tab" data-tab="help">Поддержка</div>
+            <div class="tab active" data-tab="profile" data-icon="👤">Профиль</div>
+            <div class="tab" data-tab="server" data-icon="🖥️">Сервер</div>
+            <div class="tab" data-tab="social" data-icon="🌐">Соцсети</div>
+            <div class="tab" data-tab="2fa" data-icon="🔒">2FA</div>
         </div>
 
-        <!-- Контент профиля -->
+        <!-- Профиль -->
         <div class="tab-content active" id="profile">
             <div class="card">
                 <div class="card-header">
@@ -441,142 +489,97 @@
                     </div>
                 </div>
             </div>
-            
+        </div>
+
+        <!-- Информация о сервере -->
+        <div class="tab-content" id="server">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Последние достижения</div>
+                    <div class="card-title">Наш сервер</div>
                 </div>
-                <div class="players-list">
-                    <div class="player">
-                        <div class="player-avatar">🏆</div>
-                        <div class="player-info">
-                            <div class="player-name">Легенда сервера</div>
-                            <div class="player-status">Получено сегодня</div>
+                <div class="server-info">
+                    <div class="server-item">
+                        <div class="server-icon">🖥️</div>
+                        <div class="server-details">
+                            <div class="server-name">IP сервера</div>
+                            <div class="server-address">Mc.DenyWorld.Fun</div>
                         </div>
+                        <button class="copy-btn">Копировать</button>
                     </div>
-                    <div class="player">
-                        <div class="player-avatar">⚔️</div>
-                        <div class="player-info">
-                            <div class="player-name">1000 убийств</div>
-                            <div class="player-status">3 дня назад</div>
+                    <div class="server-item">
+                        <div class="server-icon">🌐</div>
+                        <div class="server-details">
+                            <div class="server-name">Официальный сайт</div>
+                            <div class="server-address">denyworld.fun</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Контент топа игроков -->
-        <div class="tab-content" id="top">
+        <!-- Соцсети -->
+        <div class="tab-content" id="social">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Топ-10 игроков</div>
+                    <div class="card-title">Наши соцсети</div>
                 </div>
-                <div class="players-list">
-                    <div class="player">
-                        <div class="player-avatar">1</div>
-                        <div class="player-info">
-                            <div class="player-name">ProGamer2005</div>
-                            <div class="player-status">Уровень 100</div>
-                        </div>
-                        <div class="player-score">2,450</div>
+                <div class="social-grid">
+                    <div class="social-card" onclick="window.open('https://vk.com/denyworld', '_blank')">
+                        <div class="social-icon">📘</div>
+                        <div class="social-name">VK</div>
+                        <div class="social-link">vk.com/denyworld</div>
                     </div>
-                    <div class="player">
-                        <div class="player-avatar">2</div>
-                        <div class="player-info">
-                            <div class="player-name">MinecraftKing</div>
-                            <div class="player-status">Уровень 98</div>
-                        </div>
-                        <div class="player-score">2,120</div>
+                    <div class="social-card" onclick="window.open('t.me/denyworld', '_blank')">
+                        <div class="social-icon">📱</div>
+                        <div class="social-name">Telegram</div>
+                        <div class="social-link">t.me/denyworld</div>
                     </div>
-                    <!-- Остальные игроки -->
                 </div>
             </div>
         </div>
 
-        <!-- Контент онлайн -->
-        <div class="tab-content" id="online">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Игроки онлайн</div>
-                    <div class="card-value">24</div>
-                </div>
-                <div class="players-list">
-                    <div class="player">
-                        <div class="player-avatar">P</div>
-                        <div class="player-info">
-                            <div class="player-name">ProGamer2005</div>
-                            <div class="player-status online">В игре (2ч 15м)</div>
-                        </div>
-                    </div>
-                    <div class="player">
-                        <div class="player-avatar">M</div>
-                        <div class="player-info">
-                            <div class="player-name">MinecraftKing</div>
-                            <div class="player-status online">В игре (1ч 30м)</div>
-                        </div>
-                    </div>
-                    <!-- Остальные игроки -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Остальные вкладки -->
+        <!-- 2FA -->
         <div class="tab-content" id="2fa">
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">2FA Защита</div>
+                    <div class="card-value">Активна</div>
                 </div>
-                <div class="players-list">
-                    <div class="player">
-                        <div class="player-info">
-                            <div class="player-name">Статус: Включено</div>
-                            <div class="player-status">Последняя активность: сегодня</div>
+                <div class="server-info">
+                    <div class="server-item">
+                        <div class="server-icon">🔒</div>
+                        <div class="server-details">
+                            <div class="server-name">Статус защиты</div>
+                            <div class="server-address">Включена</div>
+                        </div>
+                    </div>
+                    <div class="server-item">
+                        <div class="server-icon">⏱️</div>
+                        <div class="server-details">
+                            <div class="server-name">Последняя активность</div>
+                            <div class="server-address">Сегодня, 15:30</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="tab-content" id="shop">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Магазин</div>
-                </div>
-                <!-- Товары -->
-            </div>
-        </div>
-
-        <div class="tab-content" id="social">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Соцсети</div>
-                </div>
-                <!-- Соцсети -->
-            </div>
-        </div>
-
-        <div class="tab-content" id="help">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">Поддержка</div>
-                </div>
-                <!-- FAQ -->
-            </div>
+        <div class="footer">
+            <div>DenyWorld © 2025 | Все права защищены</div>
+            <div class="creator">Создатель: @AlexDmsh</div>
         </div>
     </div>
 
     <script>
-        // Переключение вкладок
+        // Инициализация вкладок
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
         const tabIndicator = document.getElementById('tabIndicator');
         
         function setActiveTab(tab) {
-            // Обновляем активную вкладку
             tabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             
-            // Обновляем контент
             const tabId = tab.getAttribute('data-tab');
             tabContents.forEach(content => {
                 content.classList.remove('active');
@@ -585,7 +588,6 @@
                 }
             });
             
-            // Анимируем индикатор
             const tabRect = tab.getBoundingClientRect();
             const tabsRect = document.getElementById('tabs').getBoundingClientRect();
             
@@ -597,22 +599,20 @@
             tab.addEventListener('click', () => setActiveTab(tab));
         });
         
-        // Инициализация индикатора
-        const activeTab = document.querySelector('.tab.active');
-        if (activeTab) {
-            setActiveTab(activeTab);
-        }
-        
+        setActiveTab(document.querySelector('.tab.active'));
+
         // Переключение языка
         const languageCurrent = document.getElementById('languageCurrent');
         const languageDropdown = document.getElementById('languageDropdown');
         
-        languageCurrent.addEventListener('click', () => {
+        languageCurrent.addEventListener('click', (e) => {
+            e.stopPropagation();
             languageDropdown.classList.toggle('active');
         });
         
         document.querySelectorAll('.language-option').forEach(option => {
-            option.addEventListener('click', function() {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
                 const lang = this.getAttribute('data-lang');
                 const flag = this.querySelector('.language-flag').src;
                 const text = this.querySelector('span').textContent;
@@ -623,17 +623,24 @@
                 `;
                 
                 languageDropdown.classList.remove('active');
-                // Здесь можно добавить логику смены языка
+                // Здесь будет реальная смена языка
+                alert(`Язык изменен на ${text}`);
             });
         });
         
-        // Закрытие выпадающего списка при клике вне его
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.language-selector')) {
-                languageDropdown.classList.remove('active');
-            }
+        document.addEventListener('click', () => {
+            languageDropdown.classList.remove('active');
         });
-        
+
+        // Копирование IP
+        document.querySelector('.copy-btn')?.addEventListener('click', function() {
+            navigator.clipboard.writeText('Mc.DenyWorld.Fun');
+            this.textContent = 'Скопировано!';
+            setTimeout(() => {
+                this.textContent = 'Копировать';
+            }, 2000);
+        });
+
         // Инициализация Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             Telegram.WebApp.expand();
