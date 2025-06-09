@@ -1,207 +1,644 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DenyWorld | Minecraft Сервер</title>
+    <title>DenyWorld | Premium</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap">
     <style>
         :root {
-            /* Темная тема (по умолчанию) */
-            --dark-bg: #121212;
-            --dark-card: #1e1e1e;
-            --dark-text: #ffffff;
-            --dark-accent: #4cc9f0;
-            --dark-border: #333333;
-            
-            /* Светлая тема */
-            --light-bg: #f5f5f5;
-            --light-card: #ffffff;
-            --light-text: #333333;
-            --light-accent: #4361ee;
-            --light-border: #e0e0e0;
-            
-            /* Текущие переменные */
-            --bg: var(--dark-bg);
-            --card: var(--dark-card);
-            --text: var(--dark-text);
-            --accent: var(--dark-accent);
-            --border: var(--dark-border);
-            
-            --transition: all 0.3s ease;
-            --radius: 12px;
-        }
-
-        [data-theme="light"] {
-            --bg: var(--light-bg);
-            --card: var(--light-card);
-            --text: var(--light-text);
-            --accent: var(--light-accent);
-            --border: var(--light-border);
+            --bg: #0F0F1A;
+            --card: #1A1A2E;
+            --accent: #6C4DF6;
+            --accent-dark: #4A2FDB;
+            --text: #FFFFFF;
+            --text-dim: rgba(255,255,255,0.7);
+            --radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg);
+            background: var(--bg);
             color: var(--text);
-            transition: var(--transition);
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1000px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(108, 77, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(74, 47, 219, 0.15) 0%, transparent 40%);
+        }
+
+        .app {
+            max-width: 450px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
         }
 
-        h1, h2, h3 {
-            color: var(--accent);
-            margin-bottom: 15px;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        section {
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            box-shadow: 0 8px 20px rgba(108, 77, 246, 0.3);
+        }
+
+        .logo-text h1 {
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(to right, #FFFFFF, #E0E0E0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .language-selector {
+            position: relative;
+        }
+
+        .language-current {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .language-current:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .language-flag {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 100;
+            min-width: 120px;
+        }
+
+        .language-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .language-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 6px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 80px;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--text);
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 6px;
+            left: 0;
+            height: calc(100% - 12px);
+            background: var(--card);
+            border-radius: calc(var(--radius) - 6px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            z-index: 0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
             background: var(--card);
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 20px;
-            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.05);
             transition: var(--transition);
-            transform: translateY(0);
         }
 
-        section:hover {
+        .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
 
-        footer {
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--accent), var(--accent-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            color: var(--text);
-            opacity: 0.8;
         }
 
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
         }
 
-        section {
-            animation: fadeIn 0.6s ease-out forwards;
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
         }
 
-        section:nth-child(1) { animation-delay: 0.1s; }
-        section:nth-child(2) { animation-delay: 0.2s; }
-        section:nth-child(3) { animation-delay: 0.3s; }
-        section:nth-child(4) { animation-delay: 0.4s; }
-        section:nth-child(5) { animation-delay: 0.5s; }
-        section:nth-child(6) { animation-delay: 0.6s; }
-        section:nth-child(7) { animation-delay: 0.7s; }
+        .players-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-        /* Кнопка переключения темы */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        .player {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .player:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateX(5px);
+        }
+
+        .player-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--card);
-            border: 1px solid var(--border);
+            margin-right: 12px;
+            background: var(--accent);
             display: flex;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: var(--transition);
+            align-items: center;
+            font-weight: 700;
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .player-status {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .online {
+            color: #00E676;
+        }
+
+        .offline {
+            color: #FF4081;
+        }
+
+        .player-score {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .floating-bg {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .bg-1 {
+            background: var(--accent);
+            top: -100px;
+            left: -100px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .bg-2 {
+            background: var(--accent-dark);
+            bottom: -100px;
+            right: -100px;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-10px, -20px); }
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 480px) {
+            .app {
+                padding: 15px;
+            }
+            
+            .tab {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" id="themeToggle">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 17.6859L18.5 18.5M21 12H20M17.6859 6.31412L18.5 5.5M6.31412 17.6859L5.5 18.5M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-    </button>
+    <div class="floating-bg bg-1"></div>
+    <div class="floating-bg bg-2"></div>
 
-    <h1>DenyWorld</h1>
-    <p><strong>Minecraft Сервер</strong></p>
+    <div class="app">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>DenyWorld</h1>
+                    <p>Premium Experience</p>
+                </div>
+            </div>
+            
+            <div class="language-selector">
+                <div class="language-current" id="languageCurrent">
+                    <img src="https://flagcdn.com/w20/ru.png" class="language-flag" alt="Русский">
+                    <span>RU</span>
+                </div>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option" data-lang="ru">
+                        <img src="https://flagcdn.com/w20/ru.png" class="language-flag" alt="Русский">
+                        <span>Русский</span>
+                    </div>
+                    <div class="language-option" data-lang="uk">
+                        <img src="https://flagcdn.com/w20/ua.png" class="language-flag" alt="Українська">
+                        <span>Українська</span>
+                    </div>
+                    <div class="language-option" data-lang="kz">
+                        <img src="https://flagcdn.com/w20/kz.png" class="language-flag" alt="Қазақша">
+                        <span>Қазақша</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <section id="profile">
-        <h2>Мой профиль</h2>
-        <p>Статистика и достижения</p>
-    </section>
+        <div class="tabs" id="tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <div class="tab active" data-tab="profile">Профиль</div>
+            <div class="tab" data-tab="top">Топ игроков</div>
+            <div class="tab" data-tab="online">Онлайн</div>
+            <div class="tab" data-tab="2fa">2FA</div>
+            <div class="tab" data-tab="shop">Магазин</div>
+            <div class="tab" data-tab="social">Соцсети</div>
+            <div class="tab" data-tab="help">Поддержка</div>
+        </div>
 
-    <section id="top">
-        <h2>Топ игроков</h2>
-        <p>Лучшие игроки сервера</p>
-    </section>
+        <!-- Контент профиля -->
+        <div class="tab-content active" id="profile">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Ваш профиль</div>
+                    <div class="card-value">VIP+</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Уровень</div>
+                        <div class="stat-value">87</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Киллы</div>
+                        <div class="stat-value">1,245</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Смерти</div>
+                        <div class="stat-value">632</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">K/D</div>
+                        <div class="stat-value">1.97</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Последние достижения</div>
+                </div>
+                <div class="players-list">
+                    <div class="player">
+                        <div class="player-avatar">🏆</div>
+                        <div class="player-info">
+                            <div class="player-name">Легенда сервера</div>
+                            <div class="player-status">Получено сегодня</div>
+                        </div>
+                    </div>
+                    <div class="player">
+                        <div class="player-avatar">⚔️</div>
+                        <div class="player-info">
+                            <div class="player-name">1000 убийств</div>
+                            <div class="player-status">3 дня назад</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <section id="online">
-        <h2>Онлайн</h2>
-        <p>Кто сейчас в игре</p>
-    </section>
+        <!-- Контент топа игроков -->
+        <div class="tab-content" id="top">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Топ-10 игроков</div>
+                </div>
+                <div class="players-list">
+                    <div class="player">
+                        <div class="player-avatar">1</div>
+                        <div class="player-info">
+                            <div class="player-name">ProGamer2005</div>
+                            <div class="player-status">Уровень 100</div>
+                        </div>
+                        <div class="player-score">2,450</div>
+                    </div>
+                    <div class="player">
+                        <div class="player-avatar">2</div>
+                        <div class="player-info">
+                            <div class="player-name">MinecraftKing</div>
+                            <div class="player-status">Уровень 98</div>
+                        </div>
+                        <div class="player-score">2,120</div>
+                    </div>
+                    <!-- Остальные игроки -->
+                </div>
+            </div>
+        </div>
 
-    <section id="2fa">
-        <h2>2FA защита</h2>
-        <p>Безопасность аккаунта</p>
-    </section>
+        <!-- Контент онлайн -->
+        <div class="tab-content" id="online">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Игроки онлайн</div>
+                    <div class="card-value">24</div>
+                </div>
+                <div class="players-list">
+                    <div class="player">
+                        <div class="player-avatar">P</div>
+                        <div class="player-info">
+                            <div class="player-name">ProGamer2005</div>
+                            <div class="player-status online">В игре (2ч 15м)</div>
+                        </div>
+                    </div>
+                    <div class="player">
+                        <div class="player-avatar">M</div>
+                        <div class="player-info">
+                            <div class="player-name">MinecraftKing</div>
+                            <div class="player-status online">В игре (1ч 30м)</div>
+                        </div>
+                    </div>
+                    <!-- Остальные игроки -->
+                </div>
+            </div>
+        </div>
 
-    <section id="shop">
-        <h2>Магазин</h2>
-        <p>Покупка привилегий</p>
-    </section>
+        <!-- Остальные вкладки -->
+        <div class="tab-content" id="2fa">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">2FA Защита</div>
+                </div>
+                <div class="players-list">
+                    <div class="player">
+                        <div class="player-info">
+                            <div class="player-name">Статус: Включено</div>
+                            <div class="player-status">Последняя активность: сегодня</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <section id="social">
-        <h2>Соцсети</h2>
-        <p>Наши сообщества</p>
-    </section>
+        <div class="tab-content" id="shop">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Магазин</div>
+                </div>
+                <!-- Товары -->
+            </div>
+        </div>
 
-    <section id="help">
-        <h2>Помощь</h2>
-        <p>FAQ и поддержка</p>
-    </section>
+        <div class="tab-content" id="social">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Соцсети</div>
+                </div>
+                <!-- Соцсети -->
+            </div>
+        </div>
 
-    <footer>
-        DenyWorld © 2025 | Версия 3.0
-    </footer>
+        <div class="tab-content" id="help">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Поддержка</div>
+                </div>
+                <!-- FAQ -->
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Переключение темы
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Проверка сохраненной темы
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
+        // Переключение вкладок
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const tabIndicator = document.getElementById('tabIndicator');
+        
+        function setActiveTab(tab) {
+            // Обновляем активную вкладку
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // Обновляем контент
+            const tabId = tab.getAttribute('data-tab');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+            
+            // Анимируем индикатор
+            const tabRect = tab.getBoundingClientRect();
+            const tabsRect = document.getElementById('tabs').getBoundingClientRect();
+            
+            tabIndicator.style.width = `${tabRect.width}px`;
+            tabIndicator.style.left = `${tabRect.left - tabsRect.left}px`;
         }
-
-        // Анимация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => setActiveTab(tab));
         });
-
+        
+        // Инициализация индикатора
+        const activeTab = document.querySelector('.tab.active');
+        if (activeTab) {
+            setActiveTab(activeTab);
+        }
+        
+        // Переключение языка
+        const languageCurrent = document.getElementById('languageCurrent');
+        const languageDropdown = document.getElementById('languageDropdown');
+        
+        languageCurrent.addEventListener('click', () => {
+            languageDropdown.classList.toggle('active');
+        });
+        
+        document.querySelectorAll('.language-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                const flag = this.querySelector('.language-flag').src;
+                const text = this.querySelector('span').textContent;
+                
+                languageCurrent.innerHTML = `
+                    <img src="${flag}" class="language-flag" alt="${text}">
+                    <span>${lang.toUpperCase()}</span>
+                `;
+                
+                languageDropdown.classList.remove('active');
+                // Здесь можно добавить логику смены языка
+            });
+        });
+        
+        // Закрытие выпадающего списка при клике вне его
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.language-selector')) {
+                languageDropdown.classList.remove('active');
+            }
+        });
+        
         // Инициализация Telegram WebApp
         if (window.Telegram && window.Telegram.WebApp) {
             Telegram.WebApp.expand();
-            Telegram.WebApp.setHeaderColor('#4cc9f0');
-            Telegram.WebApp.setBackgroundColor('#121212');
+            Telegram.WebApp.setHeaderColor('#6C4DF6');
+            Telegram.WebApp.setBackgroundColor('#0F0F1A');
         }
     </script>
 </body>
