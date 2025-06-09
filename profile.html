@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль | DenyWorld</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="js/webapp.js"></script>
+</head>
+<body>
+    <div class="container profile-container">
+        <header class="header">
+            <div class="logo">
+                <h1>DenyWorld</h1>
+                <p>Мой профиль</p>
+            </div>
+        </header>
+
+        <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">
+                <img src="" alt="Скин игрока">
+            </div>
+            <div class="profile-info">
+                <h2 id="profile-name">Загрузка...</h2>
+                <span class="profile-status" id="profile-status">Статус</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Убийства</h3>
+                <p id="stat-kills">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Смерти</h3>
+                <p id="stat-deaths">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>K/D</h3>
+                <p id="stat-kd" class="kd-ratio">0.00</p>
+            </div>
+            <div class="stat-card">
+                <h3>Время в игре</h3>
+                <p id="stat-playtime">0ч</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Достижения</h3>
+            <p>Здесь будут отображаться ваши достижения на сервере</p>
+            <!-- Можно добавить список достижений -->
+        </div>
+
+        <footer class="footer">
+            <p>DenyWorld © 2023 | Версия 1.0.0</p>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+</body>
+</html>
